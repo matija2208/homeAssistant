@@ -3,6 +3,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoOTA.h>
 #include "Strukture.h"
 #include "Stranica.h"
 
@@ -11,21 +12,34 @@
 #define STAPSK "632mdpfY"
 #endif
 
+#define USR "matija"
+#define PSWD "01061944"
+
 ESP8266WebServer server(80);
 
 void pocetna(){
+    if(!server.authenticate(USR,PSWD))
+        return server.requestAuthentication();
     server.send(200, "text/html", stranica);
 }
 
 void vratiReleje()
 {
-    String releji = "\005releji\006";
-    Serial.print(releji);
-    int a;
-    while(a=Serial.read(),a==-1)
-        ;
-    releji = Serial.readStringUntil('\006');
-    server.send(200, "text/plain", releji);
+    if(server.arg("pageId")=="01061944mM\\")
+    {
+        String releji = "\005releji\006";
+        Serial.print(releji);
+        int a;
+        while(a=Serial.read(),a==-1)
+            ;
+        releji = Serial.readStringUntil('\006');
+        server.send(200, "text/plain", releji);
+    }
+    else
+    {
+        server.send(403);
+    }
+    
 }
 
 void relej()
@@ -33,7 +47,7 @@ void relej()
     Relej r;
 
     int n = server.args();
-    if(n==2)
+    if(n==3 && server.arg("pageId")=="01061944mM\\")
     {
         r.id = server.arg("id").c_str();
 
@@ -50,7 +64,7 @@ void relej()
     }
     else
     {
-        server.send(400, "text/plain", "Pogresan broj argumenata!");
+        server.send(403);
     }
 
     
@@ -93,15 +107,17 @@ void setup()
     Serial.println(WiFi.localIP());
     Serial.print('\004');
     delay(1);
+    ArduinoOTA.begin();
     server.enableCORS(true);
-    server.on("/", pocetna);
-    server.on("/relej", relej);
-    server.on("/releji", vratiReleje);
+    server.on("/",HTTP_GET, pocetna);
+    server.on("/relej",HTTP_PUT, relej);
+    server.on("/releji",HTTP_GET, vratiReleje);
     server.onNotFound(handleNotFound);
     server.begin();
 }
 
 void loop()
 {
+    ArduinoOTA.handle();
     server.handleClient();
 }

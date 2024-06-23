@@ -18,6 +18,8 @@ int main()
             fprintf(h, "\\\n");
         else if(c=='"')
             fprintf(h, "\\\"");
+        else if(c=='\\')
+            fprintf(h, "\\\\");
         else
             fprintf(h, "%c", c);
     }

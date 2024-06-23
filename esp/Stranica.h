@@ -35,34 +35,12 @@ const char *stranica = "<!DOCTYPE html>\
         }\
     </style>\
     <script>\
-        const link = 'http://192.168.1.27';\
-        async function dugme(d)\
-        {\
-            let id=d.id;\
-            let vrednost=(d.value===\"1\")?0:1;\
-            let k=document.getElementById(id);\
-            k.value=vrednost;\
-            let t=k.style.backgroundColor;\
-            k.style.backgroundColor=k.style.color;\
-            k.style.color=t;\
-            k.innerText=(k.value===\"1\")?\"Upaljeno\":\"Ugaseno\";\
-            try\
-            {\
-                let podaci = new FormData();\
-                podaci.append(\"id\",id);\
-                podaci.append(\"vrednost\",vrednost);\
-                let msg = await axios.post(link+'/relej', podaci);\
-                console.log(msg);\
-            }\
-            catch(err)\
-            {\
-                console.log(err);\
-            }\
-        }\
+        const link = '.';\
+        const pageId = '01061944mM\\\\';\
         async function ucitaj()\
         {\
             let poruka;\
-            Promise.resolve(axios.get(link + \"/releji\")).then((value)=>{\
+            Promise.resolve(axios.get(link + \"/releji?pageId=\"+pageId)).then((value)=>{\
                 poruka=value.data;\
                 console.log(poruka);\
                 let releji = poruka;\
@@ -80,6 +58,27 @@ const char *stranica = "<!DOCTYPE html>\
                 document.getElementById('paleta').innerHTML = div;\
             });\
         }\
+        async function dugme(d)\
+        {\
+            let id=d.id;\
+            let vrednost=(d.value===\"1\")?0:1;\
+            let k=document.getElementById(id);\
+            try\
+            {\
+                let podaci = new FormData();\
+                podaci.append(\"id\",id);\
+                podaci.append(\"vrednost\",vrednost);\
+                podaci.append(\"pageId\",pageId);\
+                let msg = await axios.put(link+'/relej', podaci);\
+                console.log(msg);\
+                ucitaj();\
+            }\
+            catch(err)\
+            {\
+                console.log(err);\
+            }\
+        }\
+        \
     </script>\
 </head>\
 <body onload=\"ucitaj()\">\
