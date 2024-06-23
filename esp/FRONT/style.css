@@ -1,0 +1,35 @@
+body {
+    font-family: 'Consolas', monospace;
+    margin: 0;
+    padding: 0;
+    background-color: #444444;
+    }
+.dugme{
+    margin:5px;
+    border-radius: 50%;
+    font-family: 'Consolas',monospace;
+    background-color: #222222;
+    color: #AAAAAA;
+    height: 40px;
+}
+.stavka{
+    background-color: #333333;
+    border-radius: 30%;
+    padding: 10px;
+    margin: 10px;
+    border-color: #000;
+    border-width: 2px;
+    width:200px;
+    height: 200px;
+    align-items: center;
+    text-align: center;
+    display:grid;
+}
+.labela{
+    text-align: center;
+    font-size: 18px;
+    font-family: 'Consolas',monospace;
+}
+#paleta{
+    display:flex;
+}

@@ -5,7 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <ArduinoOTA.h>
 #include "Strukture.h"
-#include "Stranica.h"
+#include "Stranice.h"
 
 #ifndef STASSID
 #define STASSID "TS-E8Jy"
@@ -20,7 +20,33 @@ ESP8266WebServer server(80);
 void pocetna(){
     if(!server.authenticate(USR,PSWD))
         return server.requestAuthentication();
-    server.send(200, "text/html", stranica);
+
+    Serial.print('\001');
+    Serial.print(server.arg("putanja").c_str());
+    Serial.print('\004');
+    
+    const char *stranica = vratiStranicu(server.arg("putanja").c_str());
+    
+    if(!strcmp(stranica,"404 not found"))
+        server.send(404,"text/html","Not found!");
+    else
+    {
+        String extension = "text/";
+        const char *filename = server.arg("putanja").c_str();
+        int ext = strlen(filename)-1;
+
+        if(ext == -1)
+            extension += "html";
+        
+        while(filename[ext] != '.' && ext > 0)
+            ext--;
+        for (int i = ext+1; i < strlen(filename);i++)
+        {
+            extension += filename[i];
+        }
+        
+        server.send(200, extension, stranica);
+    }
 }
 
 void vratiReleje()
